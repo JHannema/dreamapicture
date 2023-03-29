@@ -17,17 +17,22 @@ app.use(express.json());
 app.use(express.static('./public'))
 
 app.post('/dream', async (req, res) => {
-    const prompt = req.body.prompt;
-    console.log('THIS IS THE prompt: ', prompt);
+    try {
+        const prompt = req.body.prompt;
+        console.log('prompt: ', prompt);
 
-    const aiResponse = await openai.createImage({
-        "prompt":prompt,
-        n: 1,
-        size: '1024x1024',
-    });
+        const aiResponse = await openai.createImage({
+            "prompt": prompt,
+            n: 1,
+            size: '1024x1024',
+        });
 
-    const image = aiResponse.data.data[0].url;
-    res.send({ image });
+        const image = aiResponse.data.data[0].url;
+        res.send({image});
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Something went wrong');
+    }
 });
 
 app.listen(8080, () => console.log('make art on http://localhost:8080/'));
